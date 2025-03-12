@@ -19,6 +19,10 @@ TreeNode invertedRoot = InvertTree(root);
 Console.WriteLine("\nInverted Tree:");
 PrintTree(invertedRoot);
 
+/*
+The time complexity of the InvertTree method is O(n), where n is the number of nodes in the binary tree. 
+This is because the method visits each node exactly once to swap its children and recursively invert its subtrees.
+*/
 static TreeNode InvertTree(TreeNode root)
 {
     if (root == null)
@@ -38,16 +42,68 @@ static TreeNode InvertTree(TreeNode root)
     return root;
 }
 
-static void PrintTree(TreeNode root, string indent = "", bool isLeft = true)
+static void PrintTree(TreeNode root)
 {
-    if (root != null)
+    if (root == null)
     {
-        Console.WriteLine(indent + (isLeft ? "├── " : "└── ") + root.Value);
-        indent += isLeft ? "│   " : "    ";
-        PrintTree(root.Left, indent, true);
-        PrintTree(root.Right, indent, false);
+        return;
+    }
+
+    Queue<TreeNode> queue = new Queue<TreeNode>();
+    queue.Enqueue(root);
+    int height = GetHeight(root);
+    int maxWidth = (int)Math.Pow(2, height) - 1;
+
+    for (int level = 0; level < height; level++)
+    {
+        int levelSize = queue.Count;
+        int spaces = (int)Math.Pow(2, height - level - 1) - 1;
+        int betweenSpaces = (int)Math.Pow(2, height - level) - 1;
+
+        PrintSpaces(spaces);
+
+        for (int i = 0; i < levelSize; i++)
+        {
+            TreeNode current = queue.Dequeue();
+            if (current != null)
+            {
+                Console.Write(current.Value);
+                queue.Enqueue(current.Left);
+                queue.Enqueue(current.Right);
+            }
+            else
+            {
+                Console.Write(" ");
+                queue.Enqueue(null);
+                queue.Enqueue(null);
+            }
+
+            if (i < levelSize - 1)
+            {
+                PrintSpaces(betweenSpaces);
+            }
+        }
+
+        Console.WriteLine();
     }
 }
 
+static int GetHeight(TreeNode root)
+{
+    if (root == null)
+    {
+        return 0;
+    }
+
+    return 1 + Math.Max(GetHeight(root.Left), GetHeight(root.Right));
+}
+
+static void PrintSpaces(int count)
+{
+    for (int i = 0; i < count; i++)
+    {
+        Console.Write(" ");
+    }
+}
 
 
